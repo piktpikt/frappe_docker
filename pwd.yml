@@ -16,6 +16,11 @@ services:
       DB_PORT: "3306"
       MYSQL_ROOT_PASSWORD: admin
       MARIADB_ROOT_PASSWORD: admin
+    command: >
+      sh -c "
+      if [ ! -d 'apps/payments' ]; then bench get-app payments --branch version-15 --resolve-deps; fi &&
+      /home/frappe/frappe-bench/env/bin/python -m pip install -e apps/payments &&
+      /home/frappe/frappe-bench/env/bin/gunicorn -b 0.0.0.0:8000 -w 4 -t 120 frappe.app:application --preload"
 
   configurator:
     image: frappe/erpnext:v15.90.1
